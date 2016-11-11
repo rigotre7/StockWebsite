@@ -6,7 +6,10 @@ import matplotlib as mpl
 mpl.use('Agg') # Required to redirect locally
 import matplotlib.pyplot as plt
 import datetime as dt
-import numpy as np
+import plotly.plotly as py
+import plotly.tools as tls
+from plotly.graph_objs import *
+py.sign_in('rigotre', 'sjqnnlbl6v')
 import io
 import pdb
 
@@ -20,7 +23,6 @@ def get_image(request):
     date = []
     price = []
 
-    #pdb.set_trace()
     #stock_price_url = stock_price_url.replace("+stock+", stock)
     source_code = urllib.request.urlopen(stock_price_url).read().decode()
 
@@ -38,9 +40,17 @@ def get_image(request):
     plt.ylabel('Price')
     plt.title("Google Stock")
 
-    #pdb.set_trace()
-    f = io.BytesIO()
-    plt.savefig(f, format="png")
-    plt.clf()
+    mpl_fig = plt.gcf()
+    py_fig = tls.mpl_to_plotly(mpl_fig, verbose=True)
+    py.iplot_mpl(mpl_fig, filename='graph')
 
-    return HttpResponse(f.getvalue(), content_type="image/png")
+    return render(request, 'home/graph.html')
+
+
+    #f = io.BytesIO()
+    #plt.savefig(j, format="png")    #save the plot to the BytesIO stream implementation
+    #plt.clf()
+
+    ##Add the contents of the cStringIO object to the response, matching the
+    #mime type with the plot format (in this case, PNG) and return
+    #return HttpResponse(f.getvalue(), content_type="image/png")
