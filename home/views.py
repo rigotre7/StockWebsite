@@ -18,12 +18,14 @@ def index(request):
     return render(request, 'home/home.html')
 
 def get_image(request):
-    stock_price_url = 'https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=GOOGL&date.gte=20151101&qopts.columns=date,close&api_key=-2H8WyYB8b7FaCshLLTN'
+    #pdb.set_trace()
+    stock = request.GET.get("stockName")
+    stock_price_url = 'https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=+stock+&date.gte=20151101&qopts.columns=date,close&api_key=-2H8WyYB8b7FaCshLLTN'
 
     date = []
     price = []
 
-    #stock_price_url = stock_price_url.replace("+stock+", stock)
+    stock_price_url = stock_price_url.replace("+stock+", stock)
     source_code = urllib.request.urlopen(stock_price_url).read().decode()
 
     json_root = json.loads(source_code)
@@ -38,7 +40,7 @@ def get_image(request):
 
     plt.xlabel('Date')
     plt.ylabel('Price')
-    plt.title("Google Stock")
+    plt.title(stock.upper() + " Stock")
 
     mpl_fig = plt.gcf()
     py_fig = tls.mpl_to_plotly(mpl_fig, verbose=True)

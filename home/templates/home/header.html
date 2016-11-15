@@ -49,12 +49,12 @@
         <li><a href="#section2">About</a></li>
       </ul><br>
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search Stock..">
-        <span class="input-group-btn">
-          <button class="btn btn-default" type="button">
-            <span class="glyphicon glyphicon-search"></span>
-          </button>
-        </span>
+        <form role="search" action="/graph/">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search" name="stockName">
+          </div>
+          <button type="submit" class="btn btn-default">Search</button>
+        </form>
       </div>
     </div>
 
