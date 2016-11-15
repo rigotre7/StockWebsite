@@ -51,7 +51,10 @@
       <div class="input-group">
         <form role="search" action="/graph/">
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search" name="stockName">
+            <input type="text" class="form-control" placeholder="Stock Name" name="name" required>
+            Show stocks from this date:
+            <input type="date" class="form-control" name="date" min="2000-01-02" required><br>
+
           </div>
           <button type="submit" class="btn btn-default">Search</button>
         </form>

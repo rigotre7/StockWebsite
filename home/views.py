@@ -19,13 +19,18 @@ def index(request):
 
 def get_image(request):
     #pdb.set_trace()
-    stock = request.GET.get("stockName")
-    stock_price_url = 'https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=+stock+&date.gte=20151101&qopts.columns=date,close&api_key=-2H8WyYB8b7FaCshLLTN'
+    stock = request.GET.get("name")
+    d = request.GET.get('date')
+    d = d.replace('-', "")
+    print(d)
+    stock_price_url = 'https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=+stock+&date.gte=dt&qopts.columns=date,close&api_key=-2H8WyYB8b7FaCshLLTN'
 
     date = []
     price = []
 
+    #stock_price_url = stock_price_url.replace("")
     stock_price_url = stock_price_url.replace("+stock+", stock)
+    stock_price_url = stock_price_url.replace("dt", d)
     source_code = urllib.request.urlopen(stock_price_url).read().decode()
 
     json_root = json.loads(source_code)
