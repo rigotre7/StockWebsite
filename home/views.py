@@ -17,14 +17,16 @@ import pdb
 def index(request):
     return render(request, 'home/home.html')
 
+def abt(request):
+    return render(request, 'home/about.html')
+
 def get_image(request):
     #get the name and date of the stock below
-
     stock = request.GET.get("name")
     stockNames = stock.split(",")
+    stockNames.sort()
     numStocksToCompare = len(stock.split(','))
     d = request.GET.get('date')
-
     d = d.replace('-', "")
 
     stock_price_url = 'https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=+stock+&date.gte=dt&qopts.columns=date,close&api_key=-2H8WyYB8b7FaCshLLTN'
@@ -40,8 +42,6 @@ def get_image(request):
     json_datatable = json_root["datatable"]
     json_data = json_datatable["data"]
 
-    d = json_data[0]
-    startDate = dt.strptime(d[0], '%Y-%m-%d')
 
     #if there are more than one stocks to compare
     if numStocksToCompare >1:
@@ -50,16 +50,21 @@ def get_image(request):
             date.append(dt.strptime(day[0], '%Y-%m-%d'))
             price.append(day[1])
 
-        end = len(date)/numStocksToCompare
+        #sometimes the number of data entries is odd, we take care of this here
+        if(len(date)%2 == 0):
+            end = len(date)/numStocksToCompare
+        else:
+            end = len(date)/numStocksToCompare + 1
+
         start = 0
 
         for x in range (0, numStocksToCompare):
-            #split the list data for the respective
+            #split the list data for the respective stock
             datesFinal = date[int(start):int(end)]
             pricesFinal = price[int(start):int(end)]
 
-            #pdb.set_trace()
-            plt.plot_date(datesFinal, pricesFinal, '-')
+            #plot the data and add the name of the stock
+            plt.plot_date(datesFinal, pricesFinal, '-', label=stockNames[x].upper())
             start = end
             end = end+end
 
@@ -71,10 +76,11 @@ def get_image(request):
             date.append(dt.strptime(day[0], '%Y-%m-%d'))
             price.append(day[1])
 
-        plt.plot_date(date, price, '-', label = "Google")
+        plt.plot_date(date, price, '-', label=stock.upper())
 
+    #make sure the legend appears when the plotly graph is made
+    update = dict(layout=dict(showlegend=True))
 
-    #plt.legend()
     plt.xlabel('Date')
     plt.ylabel('Price')
     plt.title(stock.upper() + " Stock")
@@ -86,6 +92,6 @@ def get_image(request):
     #finally, we create plotly figure
     mpl_fig = plt.gcf()
     py_fig = tls.mpl_to_plotly(mpl_fig, verbose=True)
-    py.iplot_mpl(mpl_fig, filename='graph')
+    py.iplot_mpl(mpl_fig, update=update, filename='graph')
 
     return render(request, 'home/graph.html')
